@@ -1,4 +1,4 @@
-import {IsArray, IsDate, IsDateString, IsInt, IsMilitaryTime, IsNotEmpty,IsOptional,IsString,} from "class-validator";
+import {IsArray, IsDate, IsDateString, IsInt, IsMilitaryTime, IsNotEmpty,IsNumber,IsOptional,IsString,} from "class-validator";
 
 export class UpdateSongDto{
 
@@ -8,8 +8,8 @@ export class UpdateSongDto{
 
     @IsOptional()
     @IsArray()
-    @IsString({each: true})
-    artists: string[];
+    @IsNumber({},{each:true})
+    artists: number[];
 
     @IsDateString()
     @IsOptional()

@@ -1,4 +1,5 @@
-import {IsArray, IsDate, IsDateString, IsInt, IsMilitaryTime, IsNotEmpty,IsOptional,IsString,} from "class-validator";
+import { Artist } from "@prisma/client";
+import {IsArray, IsDate, IsDateString, IsInt, IsMilitaryTime, IsNotEmpty,IsNumber,IsOptional,IsString,} from "class-validator";
 
 export class CreateSongDto{
 
@@ -8,8 +9,8 @@ export class CreateSongDto{
 
     @IsNotEmpty()
     @IsArray()
-    @IsString({each: true})
-    readonly artists: string[];
+    @IsNumber({}, { each: true })
+    readonly artists: number[];
 
     @IsDateString()
     @IsNotEmpty()
