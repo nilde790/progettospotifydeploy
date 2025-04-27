@@ -17,18 +17,13 @@ datasource db {
 model Song {
 
   id      Int   @id @default(autoincrement())
-
   title  String 
-
   artists  Artist[] @relation("SongArtists")
-
   releasedDate DateTime 
-
   duration     String
-
   lyrics       String
-
-  createdAt    DateTime @default(now())
+  createdAt    DateTime   @default(now())
+  playlist    Playlist[]  @relation("PlaylistSongs")
 
 }
 
@@ -40,6 +35,13 @@ model User{
   email        String @unique
   password     String
   artist       Artist?  
+  playlist    Playlist[] 
+  apiKey       String  @unique 
+  phone        String?
+
+  //2FA
+  twoFASecret  String?  @db.Text
+  enable2FA    Boolean  @default(false)
 
 }
 
@@ -49,5 +51,15 @@ model Artist {
   userId  Int @unique
   user    User @relation(fields: [userId], references: [id])
   song   Song[]   @relation("SongArtists")
+
+}
+
+model Playlist{
+
+  id      Int     @id @default(autoincrement())
+  name    String
+  userId  Int
+  user    User    @relation(fields: [userId], references: [id])
+  songs   Song[]  @relation("PlaylistSongs")  
 
 }

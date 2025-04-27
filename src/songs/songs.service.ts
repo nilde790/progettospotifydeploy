@@ -14,44 +14,39 @@ export class SongsService
 
     constructor(private prisma: PrismaService){}
 
-//insert 
-async create(createSongDto: CreateSongDto): Promise<Song & { artists: Artist[] }>{
+//insert dove posto una canzone e la collego tramite id ad un artista esistente
+async create(createSongDto: CreateSongDto):Promise<Song>{
 
-        const {artists, ...songData} = createSongDto;
+        const {artistId,title,releasedDate,duration,lyrics} = createSongDto;
 
         const newSong = await this.prisma.song.create({
 
             data: {
 
-                title: createSongDto.title,
-                releasedDate: new Date(createSongDto.releasedDate),
-                duration: createSongDto.duration,
-                lyrics: createSongDto.lyrics,
+                title,
+                releasedDate: new Date(releasedDate),
+                duration,
+                lyrics,
                 artists: {
 
-                    connect: artists.map((id) => ({id})),
+                    connect: artistId.map((artistId) => ({ id: artistId })),
 
                 },
             },
-            include: { artists: true},      
+            include: {artists:{include:{user:{select:{firstName:true,lastName:true}}}}},      
         });  
         return newSong;       
     }  
-  
-//get
-    // async findAll(): Promise<Song[]>{
 
-    //     return this.prisma.song.findMany();
-    // }
 
 //getById
-    async findOne(id:number):Promise<Song>{
+     async findOne(id:number):Promise<Song>{
 
         const song = await this.prisma.song.findUnique({
             
             where: {id},
 
-            include: {artists: true},
+            include: {artists:{include:{user:{select:{firstName:true,lastName:true}}}}}
         });
 
         if (!song){
@@ -82,22 +77,22 @@ async remove(id:number):Promise<void>{
 //update
 async update(id: number, recordToUpdate: UpdateSongDto):Promise<Song>{
 
-    const { artists, ...songData } = recordToUpdate;
+    const { artistId,title,releasedDate,duration,lyrics } = recordToUpdate;
 
     try{
     return await this.prisma.song.update({
         where: {id},
-        data: {
-            ...songData,
+        data:   {title,
+                releasedDate: new Date(releasedDate),
+                duration,
+                lyrics,
+                artists: {
 
-            artists: {
+                    set: artistId.map((artistId) => ({ id: artistId })),
 
-                set: artists?.map(id => ({ id })),
-
-                disconnect: [],
+                },
             },
-        },
-        include: {artists: true},
+            include: {artists:{include:{user:{select:{firstName:true,lastName:true}}}}},    
     });
 }
 catch(error){
@@ -113,8 +108,8 @@ catch(error){
 }
 }
 
-//paginated, il get
-async paginateSongs(page: number, limit: number, order: string):Promise<PaginatedResult<Prisma.Song & { artists: Artist[] }>>{
+//paginated, il get avanzato
+async getWithPagine(page: number, limit: number, order: string){
     const orderByClause: { releasedDate: 'asc' | 'desc' } = order === 'asc' ? { releasedDate: 'asc' } : { releasedDate: 'desc' };
 
     const [song, total] = await Promise.all([
@@ -122,26 +117,30 @@ async paginateSongs(page: number, limit: number, order: string):Promise<Paginate
             skip: (page - 1) * limit,
             take: limit,
             orderBy: orderByClause,
-            include: {artists:true},
-        }),
+            include: {
+                artists:{
+                    include:{
+                        user:{
+                            select:{
+                                firstName:true,
+                                lastName:true
+                            }
+                            
+                         }
+
+                    }
+               }
+                
+            }
+        },
+    ),
         
         this.prisma.song.count(),   
     ]);
 
-    // const totalPages = Math.ceil(total/limit);
-
      return{
 
         song,total,page,limit
-
-        //  data: songs,
-    //     meta: {
-    //         totalItems: total,
-    //         itemCount: songs.length,
-    //         itemsPerPage: limit,
-    //         totalPages: totalPages,
-    //         currentPage: page,
-    //     },
 
      };
 }

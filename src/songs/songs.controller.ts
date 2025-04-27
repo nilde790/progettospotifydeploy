@@ -1,12 +1,12 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UseGuards, Request } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { get } from 'http';
 import { CreateSongDto } from './dto/create-song.dto';
 import { promises } from 'dns';
-import { Song } from 'generated/prisma';
 import { UpdateSongDto } from './dto/update-song.dto';
-import { Artist } from '@prisma/client';
+import { Artist,Song } from '@prisma/client';
 import { addAbortListener } from 'events';
+import { JwtArtistsGuard } from 'src/artists/jwt-artists.guard';
 
 
 @Controller('songs')
@@ -17,32 +17,29 @@ import { addAbortListener } from 'events';
         
 
     @Post()
-    async create(@Body() createSongDto: CreateSongDto){
+    @UseGuards(JwtArtistsGuard)
+    async create(@Body() createSongDto: CreateSongDto, @Request() req):Promise<Song>{
+
+        console.log(req.user);
+
+        return this.songService.create(createSongDto);
         
-        const song = await this.songService.create(createSongDto);
+        };
 
-        return { ...song, artists: song.artists.map(artist => artist.id), };
-
-    }
+    
 
     @Get()
     async findAll(@Query('page',  new DefaultValuePipe(1), ParseIntPipe) page: number = 1, 
                   @Query('limit', new DefaultValuePipe(10),ParseIntPipe) limit: number = 10,
                   @Query('order', new DefaultValuePipe('desc'))order: string = 'desc'
-                )/*: Promise<PaginatedResult<Song>>*/{
+                ): Promise<PaginatedResult<Song>>{
            
     try {
 
         limit= limit > 100 ? 100 : limit;
 
-        const { song, total } = await this.songService.paginateSongs(page, limit, order);   
+        return this.songService.getWithPagine(page, limit, order);   
           
-         return {
-            songs: song.map(song =>({
-                ...song, artists: song.artists.map(artist => artist.name),
-            })),
-            total,page,limit,
-         };
         
     }
     catch(error)
@@ -55,25 +52,24 @@ import { addAbortListener } from 'events';
 //     return this.songService.paginateSongs(page, limit);
 // }
 
+            //temp
 
-    @Get(':id')
-    async findOne(@Param('id', new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number): Promise<Song>{
+
+     @Get(':id')
+     async findOne(@Param('id', new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number)
+     :Promise<Song>{
     
-        return this.songService.findOne(id);
+         return this.songService.findOne(id);
 
-    }
+     }
 
     @Put(':id')
 async update(
   @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number,
-  @Body() updateSongDto: UpdateSongDto,
-) {
-  const updatedSong = await this.songService.update(id, updateSongDto);
+  @Body() updateSongDto: UpdateSongDto,) {
 
-  return {
-    ...updatedSong,
-    artists: updatedSong.artists?.map(artist => artist.id) ?? [],
-  };
+  return this.songService.update(id, updateSongDto);
+  
 }
     @Delete(':id')
      async remove(@Param('id',new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id:number): Promise<void>{
@@ -82,4 +78,4 @@ async update(
     }
 
     }
-
+    

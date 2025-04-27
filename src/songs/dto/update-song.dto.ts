@@ -1,24 +1,32 @@
+import { ApiProperty } from "@nestjs/swagger";
 import {IsArray, IsDate, IsDateString, IsInt, IsMilitaryTime, IsNotEmpty,IsNumber,IsOptional,IsString,} from "class-validator";
 
 export class UpdateSongDto{
 
+
+
+    @ApiProperty()    
     @IsString()
     @IsOptional()
-    title: string;
+    readonly title: string;
 
+    @ApiProperty()
     @IsOptional()
     @IsArray()
     @IsNumber({},{each:true})
-    artists: number[];
+    readonly artistId: number[];
 
+    @ApiProperty()
     @IsDateString()
     @IsOptional()
-    releasedDate: string;
+    readonly releasedDate: string;
 
+    @ApiProperty()
     @IsString()
     @IsOptional()
-    duration: string;
+    readonly duration: string;
 
+    @ApiProperty()
     @IsString()
     @IsOptional()
     readonly lyrics: string;
