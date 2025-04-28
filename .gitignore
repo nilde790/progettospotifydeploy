@@ -1,58 +1,100 @@
-# compiled output
-/dist
-/node_modules
-/build
-
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-debug.log*
 
-# OS
-.DS_Store
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-# Tests
-/coverage
-/.nyc_output
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# Dependency directories
+node_modules/
+jspm_packages/
 
-# IDE - VSCode
+# Build output
+dist/
+build/
+
+# Prisma
+prisma/migrations/
+*.tsbuildinfo
+
+# dotenv environment files
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# Coverage
+coverage/
+.nyc_output/
+.nyc_output/
+
+# IDEs and Editors
+.idea/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# dotenv environment variable files
-.env
-.env.development
-.env.development.local
-.env.test.local
-.env.production
-.env.production.local
-.env.local
+# OS files
+.DS_Store
 
-# temp directory
-.temp
-.tmp
+# Temp folders
+.temp/
+.tmp/
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Parcel cache
+.cache/
+.parcel-cache/
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+# Snowpack
+web_modules/
+
+# Yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Serverless
+.serverless/
+
+# FuseBox
+.fusebox/
+
+# DynamoDB Local
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# VSCode test versions
+.vscode-test
+
+# Optional caches
+.npm
+.eslintcache
+.stylelintcache
+
+# Misc
+*.tgz
+lib-cov
+bower_components/
+.lock-wscript
+build/Release
