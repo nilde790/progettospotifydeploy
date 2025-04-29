@@ -13,6 +13,7 @@ declare const module: any; //abilita HMR
 
 async function bootstrap() {
 
+  
   console.log(process.env);  // Questo stamperà tutte le variabili di ambiente
 
 
@@ -54,6 +55,6 @@ async function bootstrap() {
     
   }
 
-  await app.listen(configService.get<number>("port") || 3000);
+  await app.listen(configService.get<number>("port") || 5000);
 } 
 bootstrap();
